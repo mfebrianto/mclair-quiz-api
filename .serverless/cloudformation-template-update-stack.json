@@ -161,7 +161,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mclair-quiz-api/dev/1636326516788-2021-11-07T23:08:36.788Z/mclair-quiz-api.zip"
+          "S3Key": "serverless/mclair-quiz-api/dev/1636636333722-2021-11-11T13:12:13.722Z/mclair-quiz-api.zip"
         },
         "Handler": "src/functions/hello/handler.main",
         "Runtime": "nodejs14.x",
@@ -184,14 +184,14 @@
         "HelloLogGroup"
       ]
     },
-    "HelloLambdaVersionk4o1HKmKgGpiupWFSzatSTxtA1Lv7pLBxCbaNOkfuF8": {
+    "HelloLambdaVersionMcPgHSxo6VO4lShtuixgsa42rL872VxHozraNrn4Fw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HelloLambdaFunction"
         },
-        "CodeSha256": "nzPNust5dS6bLWZbnka+M+fdYP5zXWA2TFXJgfTSImk="
+        "CodeSha256": "hABt+1oIFczNyb13Sbha23CFG0HB2/YT9n8JYsl76ac="
       }
     },
     "ApiGatewayRestApi": {
@@ -307,7 +307,7 @@
         }
       }
     },
-    "ApiGatewayDeployment1636326511170": {
+    "ApiGatewayDeployment1636636321137": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -369,7 +369,7 @@
     "HelloLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HelloLambdaVersionk4o1HKmKgGpiupWFSzatSTxtA1Lv7pLBxCbaNOkfuF8"
+        "Ref": "HelloLambdaVersionMcPgHSxo6VO4lShtuixgsa42rL872VxHozraNrn4Fw"
       },
       "Export": {
         "Name": "sls-mclair-quiz-api-dev-HelloLambdaFunctionQualifiedArn"

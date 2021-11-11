@@ -1,19 +1,10 @@
-// Update with your config settings.
-
 module.exports = {
-  dev: {
-    client: 'postgresql',
-    connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
-    },
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      tableName: 'knex_migrations'
-    }
-  },
+  client: 'pg',
+  version: '7.2',
+  connection: {
+    host : 'dev.cs5ztqximrwk.ap-southeast-2.rds.amazonaws.com',
+    user : 'dev',
+    password : 'AWqasde321!',
+    database : 'mclair_quiz_dev'
+  }
 };
