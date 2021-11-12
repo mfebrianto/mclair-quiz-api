@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 import hello from '@functions/hello';
+import quizzes from '@functions/quizzes';
 
 const serverlessConfiguration: AWS = {
   service: 'mclair-quiz-api',
@@ -26,7 +27,7 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
-  functions: { hello },
+  functions: { hello, quizzes, },
 };
 
 module.exports = serverlessConfiguration;
