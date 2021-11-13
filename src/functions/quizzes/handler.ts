@@ -10,9 +10,6 @@ const knexInstance = knex(knexfile);
 const quizzes = async () => {
   const quizzes = await knexInstance<Quiz>('quizzes');
 
-  console.log('quizzes')
-  console.log(quizzes)
-
   return formatJSONResponse({
     message: quizzes,
   });
