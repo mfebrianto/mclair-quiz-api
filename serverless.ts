@@ -2,14 +2,19 @@ import type { AWS } from '@serverless/typescript';
 
 import hello from '@functions/hello';
 import quizzes from '@functions/quizzes';
+import quizDetail from '@functions/quiz_detail';
 
 const serverlessConfiguration: AWS = {
-  service: 'mclair-quiz-api',
+  service: 'quiz-api',
+  app: 'mclair',
+  org: 'mfebrianto',
   frameworkVersion: '2',
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
-      includeModules: true,
+      includeModules: {
+        forceInclude: ['pg']
+      }
     },
   },
   plugins: ['serverless-webpack', 'serverless-offline'],
@@ -27,7 +32,7 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
-  functions: { hello, quizzes, },
+  functions: { hello, quizzes, quizDetail},
 };
 
 module.exports = serverlessConfiguration;

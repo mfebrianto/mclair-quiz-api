@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "mclair-quiz-api",
+    "service": "quiz-api",
     "serviceObject": {
-      "name": "mclair-quiz-api"
+      "name": "quiz-api"
     },
     "provider": {
       "name": "aws",
@@ -94,13 +94,19 @@
           "HelloLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/mclair-quiz-api-dev-hello"
+              "LogGroupName": "/aws/lambda/quiz-api-dev-hello"
             }
           },
           "QuizzesLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/mclair-quiz-api-dev-quizzes"
+              "LogGroupName": "/aws/lambda/quiz-api-dev-quizzes"
+            }
+          },
+          "QuizDetailLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/quiz-api-dev-quizDetail"
             }
           },
           "IamRoleLambdaExecution": {
@@ -128,7 +134,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "mclair-quiz-api",
+                        "quiz-api",
                         "dev",
                         "lambda"
                       ]
@@ -145,7 +151,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/mclair-quiz-api-dev*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/quiz-api-dev*:*"
                           }
                         ]
                       },
@@ -156,7 +162,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/mclair-quiz-api-dev*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/quiz-api-dev*:*:*"
                           }
                         ]
                       }
@@ -169,7 +175,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "mclair-quiz-api",
+                    "quiz-api",
                     "dev",
                     {
                       "Ref": "AWS::Region"
@@ -180,6 +186,64 @@
               }
             }
           },
+          "EnterpriseLogAccessIamRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "arn:aws:iam::802587217904:root"
+                    },
+                    "Action": "sts:AssumeRole",
+                    "Condition": {
+                      "StringEquals": {
+                        "sts:ExternalId": "ServerlessEnterprise-xpqJ0wxhsPQ9yZYtgG"
+                      }
+                    }
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "LogFilterAccess",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:FilterLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "HelloLogGroup",
+                              "Arn"
+                            ]
+                          },
+                          {
+                            "Fn::GetAtt": [
+                              "QuizzesLogGroup",
+                              "Arn"
+                            ]
+                          },
+                          {
+                            "Fn::GetAtt": [
+                              "QuizDetailLogGroup",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
           "HelloLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
@@ -187,11 +251,11 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/mclair-quiz-api/dev/1636715253240-2021-11-12T11:07:33.240Z/mclair-quiz-api.zip"
+                "S3Key": "serverless/quiz-api/dev/1636788331780-2021-11-13T07:25:31.780Z/quiz-api.zip"
               },
-              "Handler": "src/functions/hello/handler.main",
+              "Handler": "s_hello.handler",
               "Runtime": "nodejs14.x",
-              "FunctionName": "mclair-quiz-api-dev-hello",
+              "FunctionName": "quiz-api-dev-hello",
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
@@ -217,11 +281,11 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/mclair-quiz-api/dev/1636715253240-2021-11-12T11:07:33.240Z/mclair-quiz-api.zip"
+                "S3Key": "serverless/quiz-api/dev/1636788331780-2021-11-13T07:25:31.780Z/quiz-api.zip"
               },
-              "Handler": "src/functions/quizzes/handler.main",
+              "Handler": "s_quizzes.handler",
               "Runtime": "nodejs14.x",
-              "FunctionName": "mclair-quiz-api-dev-quizzes",
+              "FunctionName": "quiz-api-dev-quizzes",
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
@@ -240,30 +304,70 @@
               "QuizzesLogGroup"
             ]
           },
-          "HelloLambdaVersionQpghdIXOXbeZa1lhF2SxrOKdd26KAeMaLg6WycR1gI": {
+          "QuizDetailLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/quiz-api/dev/1636788331780-2021-11-13T07:25:31.780Z/quiz-api.zip"
+              },
+              "Handler": "s_quizDetail.handler",
+              "Runtime": "nodejs14.x",
+              "FunctionName": "quiz-api-dev-quizDetail",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "QuizDetailLogGroup"
+            ]
+          },
+          "HelloLambdaVersionTuZCUQES2va19lsz6g6076Y1w2yhAO33p031OGv7h8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "HelloLambdaFunction"
               },
-              "CodeSha256": "AVa2Uc5CPJ1nfO1tWquUKDHQHzrbbjHUqulYq2i1ANM="
+              "CodeSha256": "GozLJSKBwfEbh2mBSgs/KthHXDXt1rRmjsvMmNtZsPY="
             }
           },
-          "QuizzesLambdaVersionjeRWrI8E6U0RsuRrLN0P4vmHIbkq8N6ppZjX2SbA8": {
+          "QuizzesLambdaVersionfL7oSG5xA3XWhqF0dGjLugPQ1lu3d62iKQQH7xQE3c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "QuizzesLambdaFunction"
               },
-              "CodeSha256": "AVa2Uc5CPJ1nfO1tWquUKDHQHzrbbjHUqulYq2i1ANM="
+              "CodeSha256": "GozLJSKBwfEbh2mBSgs/KthHXDXt1rRmjsvMmNtZsPY="
+            }
+          },
+          "QuizDetailLambdaVersionh22RsqXWGRwSrz0Mgs2lthSAhYZoivmXhvpijUuoG4c": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "QuizDetailLambdaFunction"
+              },
+              "CodeSha256": "GozLJSKBwfEbh2mBSgs/KthHXDXt1rRmjsvMmNtZsPY="
             }
           },
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "mclair-quiz-api-dev",
+              "Name": "quiz-api-dev",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -298,6 +402,33 @@
                 ]
               },
               "PathPart": "quizzes",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceQuiz": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "quiz",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceQuizIdVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceQuiz"
+              },
+              "PathPart": "{id}",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -345,7 +476,7 @@
               },
               "MethodResponses": [],
               "RequestValidatorId": {
-                "Ref": "ApiGatewayMclairquizapiRequestValidator"
+                "Ref": "ApiGatewayQuizapiRequestValidator"
               },
               "RequestModels": {
                 "application/json": {
@@ -403,7 +534,53 @@
               "QuizzesLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayMclairquizapiRequestValidator": {
+          "ApiGatewayMethodQuizIdVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceQuizIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "QuizDetailLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "QuizDetailLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayQuizapiRequestValidator": {
             "Type": "AWS::ApiGateway::RequestValidator",
             "Properties": {
               "RestApiId": {
@@ -411,7 +588,7 @@
               },
               "ValidateRequestBody": true,
               "ValidateRequestParameters": true,
-              "Name": "mclair-quiz-api-dev | Validate request body and querystring parameters"
+              "Name": "quiz-api-dev | Validate request body and querystring parameters"
             }
           },
           "ApiGatewayMethodHelloPostApplicationJsonModel": {
@@ -434,7 +611,7 @@
               }
             }
           },
-          "ApiGatewayDeployment1636715236056": {
+          "ApiGatewayDeployment1636788310568": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -444,7 +621,8 @@
             },
             "DependsOn": [
               "ApiGatewayMethodHelloPost",
-              "ApiGatewayMethodQuizzesGet"
+              "ApiGatewayMethodQuizzesGet",
+              "ApiGatewayMethodQuizIdVarGet"
             ]
           },
           "HelloLambdaPermissionApiGateway": {
@@ -520,6 +698,210 @@
                 ]
               }
             }
+          },
+          "QuizDetailLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "QuizDetailLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "ApiGatewayLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/api-gateway/quiz-api-dev"
+            }
+          },
+          "CustomApiGatewayAccountCloudWatchRole": {
+            "Type": "Custom::ApiGatewayAccountRole",
+            "Version": 1,
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+                  "Arn"
+                ]
+              }
+            }
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "quiz-api",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "iam:",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              "role/*"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "iam:AttachRolePolicy",
+                          "iam:CreateRole",
+                          "iam:ListAttachedRolePolicies",
+                          "iam:PassRole"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "apigateway:*::/account"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "apigateway:GET",
+                          "apigateway:PATCH"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/quiz-api/dev/1636788331780-2021-11-13T07:25:31.780Z/custom-resources.zip"
+              },
+              "FunctionName": "quiz-api-dev-custom-resource-apigw-cw-role",
+              "Handler": "apiGatewayCloudWatchRole/handler.handler",
+              "MemorySize": 1024,
+              "Runtime": "nodejs12.x",
+              "Timeout": 180,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          },
+          "CWLSubFilterHelloLogGroupApSoutheast2": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:ap-southeast-2:802587217904:destination:xpqJ0wxhsPQ9yZYtgG#2y79FCHbfTc6yZhtHf#quiz-api#dev",
+              "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+              "LogGroupName": {
+                "Ref": "HelloLogGroup"
+              }
+            }
+          },
+          "CWLSubFilterQuizzesLogGroupApSoutheast2": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:ap-southeast-2:802587217904:destination:xpqJ0wxhsPQ9yZYtgG#2y79FCHbfTc6yZhtHf#quiz-api#dev",
+              "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+              "LogGroupName": {
+                "Ref": "QuizzesLogGroup"
+              }
+            }
+          },
+          "CWLSubFilterQuizDetailLogGroupApSoutheast2": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:ap-southeast-2:802587217904:destination:xpqJ0wxhsPQ9yZYtgG#2y79FCHbfTc6yZhtHf#quiz-api#dev",
+              "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+              "LogGroupName": {
+                "Ref": "QuizDetailLogGroup"
+              }
+            }
+          },
+          "CWLSubFilterApiGatewayLogGroupApSoutheast2": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:ap-southeast-2:802587217904:destination:xpqJ0wxhsPQ9yZYtgG#2y79FCHbfTc6yZhtHf#quiz-api#dev",
+              "FilterPattern": "\"SLS_ACCESS_LOG\"",
+              "LogGroupName": {
+                "Ref": "ApiGatewayLogGroup"
+              }
+            }
           }
         },
         "Outputs": {
@@ -528,25 +910,45 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-mclair-quiz-api-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-quiz-api-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "EnterpriseLogAccessIamRole": {
+            "Value": {
+              "Fn::GetAtt": [
+                "EnterpriseLogAccessIamRole",
+                "Arn"
+              ]
+            },
+            "Export": {
+              "Name": "sls-quiz-api-dev-EnterpriseLogAccessIamRole"
             }
           },
           "HelloLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HelloLambdaVersionQpghdIXOXbeZa1lhF2SxrOKdd26KAeMaLg6WycR1gI"
+              "Ref": "HelloLambdaVersionTuZCUQES2va19lsz6g6076Y1w2yhAO33p031OGv7h8"
             },
             "Export": {
-              "Name": "sls-mclair-quiz-api-dev-HelloLambdaFunctionQualifiedArn"
+              "Name": "sls-quiz-api-dev-HelloLambdaFunctionQualifiedArn"
             }
           },
           "QuizzesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "QuizzesLambdaVersionjeRWrI8E6U0RsuRrLN0P4vmHIbkq8N6ppZjX2SbA8"
+              "Ref": "QuizzesLambdaVersionfL7oSG5xA3XWhqF0dGjLugPQ1lu3d62iKQQH7xQE3c"
             },
             "Export": {
-              "Name": "sls-mclair-quiz-api-dev-QuizzesLambdaFunctionQualifiedArn"
+              "Name": "sls-quiz-api-dev-QuizzesLambdaFunctionQualifiedArn"
+            }
+          },
+          "QuizDetailLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "QuizDetailLambdaVersionh22RsqXWGRwSrz0Mgs2lthSAhYZoivmXhvpijUuoG4c"
+            },
+            "Export": {
+              "Name": "sls-quiz-api-dev-QuizDetailLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -572,7 +974,7 @@
               ]
             },
             "Export": {
-              "Name": "sls-mclair-quiz-api-dev-ServiceEndpoint"
+              "Name": "sls-quiz-api-dev-ServiceEndpoint"
             }
           }
         }
@@ -659,21 +1061,31 @@
           }
         }
       },
+      "logs": {
+        "restApi": {
+          "format": "{\"requestTime\":\"$context.requestTime\",\"requestId\":\"$context.requestId\",\"apiId\":\"$context.apiId\",\"resourceId\":\"$context.resourceId\",\"resourcePath\":\"$context.resourcePath\",\"path\":\"$context.path\",\"httpMethod\":\"$context.httpMethod\",\"status\":\"$context.status\",\"authLatency\":\"$context.authorizer.integrationLatency\",\"integrationLatency\":\"$context.integrationLatency\",\"integrationStatus\":\"$context.integrationStatus\",\"responseLatency\":\"$context.responseLatency\",\"responseLength\":\"$context.responseLength\",\"errorMessage\":\"$context.error.message\",\"format\":\"SLS_ACCESS_LOG\",\"version\":\"1.0.0\"}"
+        }
+      },
       "vpc": {}
     },
     "custom": {
       "webpack": {
         "webpackConfig": "./webpack.config.js",
-        "includeModules": true
+        "includeModules": {
+          "forceInclude": [
+            "pg"
+          ]
+        }
       }
     },
     "plugins": [
-      "serverless-webpack"
+      "serverless-webpack",
+      "serverless-offline"
     ],
     "pluginsData": {},
     "functions": {
       "hello": {
-        "handler": "src/functions/hello/handler.main",
+        "handler": "s_hello.handler",
         "events": [
           {
             "http": {
@@ -690,18 +1102,18 @@
             }
           }
         ],
-        "name": "mclair-quiz-api-dev-hello",
+        "name": "quiz-api-dev-hello",
         "package": {
-          "artifact": ".serverless/mclair-quiz-api.zip"
+          "artifact": ".serverless/quiz-api.zip"
         },
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "HelloLambdaVersionQpghdIXOXbeZa1lhF2SxrOKdd26KAeMaLg6WycR1gI"
+        "versionLogicalId": "HelloLambdaVersionTuZCUQES2va19lsz6g6076Y1w2yhAO33p031OGv7h8"
       },
       "quizzes": {
-        "handler": "src/functions/quizzes/handler.main",
+        "handler": "s_quizzes.handler",
         "events": [
           {
             "http": {
@@ -711,15 +1123,36 @@
             }
           }
         ],
-        "name": "mclair-quiz-api-dev-quizzes",
+        "name": "quiz-api-dev-quizzes",
         "package": {
-          "artifact": ".serverless/mclair-quiz-api.zip"
+          "artifact": ".serverless/quiz-api.zip"
         },
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "QuizzesLambdaVersionjeRWrI8E6U0RsuRrLN0P4vmHIbkq8N6ppZjX2SbA8"
+        "versionLogicalId": "QuizzesLambdaVersionfL7oSG5xA3XWhqF0dGjLugPQ1lu3d62iKQQH7xQE3c"
+      },
+      "quizDetail": {
+        "handler": "s_quizDetail.handler",
+        "events": [
+          {
+            "http": {
+              "method": "get",
+              "path": "quiz/{id}",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "quiz-api-dev-quizDetail",
+        "package": {
+          "artifact": ".serverless/quiz-api.zip"
+        },
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs14.x",
+        "vpc": {},
+        "versionLogicalId": "QuizDetailLambdaVersionh22RsqXWGRwSrz0Mgs2lthSAhYZoivmXhvpijUuoG4c"
       }
     },
     "configValidationMode": "warn",
@@ -728,6 +1161,8 @@
       "service": {
         "$ref": "$[\"service\"][\"serviceObject\"]"
       },
+      "app": "mclair",
+      "org": "mfebrianto",
       "frameworkVersion": "2",
       "custom": {
         "$ref": "$[\"service\"][\"custom\"]"
@@ -742,11 +1177,16 @@
         "$ref": "$[\"service\"][\"functions\"]"
       }
     },
+    "app": "mclair",
+    "org": "mfebrianto",
     "layers": {},
-    "isDashboardMonitoringPreconfigured": false
+    "isDashboardMonitoringPreconfigured": true,
+    "isDashboardAppPreconfigured": true,
+    "orgUid": "xpqJ0wxhsPQ9yZYtgG",
+    "appUid": "2y79FCHbfTc6yZhtHf"
   },
   "package": {
-    "artifactDirectoryName": "serverless/mclair-quiz-api/dev/1636715253240-2021-11-12T11:07:33.240Z",
+    "artifactDirectoryName": "serverless/quiz-api/dev/1636788331780-2021-11-13T07:25:31.780Z",
     "artifact": ""
   }
 }
