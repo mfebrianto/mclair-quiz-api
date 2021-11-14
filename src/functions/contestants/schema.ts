@@ -1,10 +1,7 @@
 export default {
   type: "object",
   properties: {
-    quiz_id: { type: 'integer' },
-    answers: [
-      { answer: 'integer', answer_time: 'integer' }
-    ]
+    quiz_id: { type: 'integer' }
   },
   required: ['quiz_id']
 } as const;

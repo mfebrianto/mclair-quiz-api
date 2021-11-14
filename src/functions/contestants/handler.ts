@@ -8,8 +8,11 @@ import { formatJSONResponse } from '@libs/apiGateway';
 import schema from './schema';
 
 const contestants: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+
+  const body = JSON.parse(event.body.toString())
+
   return formatJSONResponse({
-    message: `Hello ${event.body.quiz_id}, welcome to the exciting Serverless world!`,
+    message: `Hello ${body.quiz_id}, welcome to the exciting Serverless world!`,
     event,
   });
 }
