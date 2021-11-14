@@ -3,6 +3,7 @@ import type { AWS } from '@serverless/typescript';
 import hello from '@functions/hello';
 import quizzes from '@functions/quizzes';
 import quizDetail from '@functions/quiz_detail';
+import candidates from '@functions/contestants';
 
 const serverlessConfiguration: AWS = {
   service: 'quiz-api',
@@ -32,7 +33,7 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
-  functions: { hello, quizzes, quizDetail},
+  functions: { hello, quizzes, quizDetail, candidates},
 };
 
 module.exports = serverlessConfiguration;
