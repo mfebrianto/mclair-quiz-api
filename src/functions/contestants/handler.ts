@@ -15,7 +15,17 @@ const contestants: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (ev
 
   const body = JSON.parse(event.body.toString())
 
-  //todo: validate email & phone & quiz_id
+  const isContestantExist = await knexInstance<Contestant>('contestants')
+    .where({email: body.email})
+    .andWhere({phone: body.phone})
+    .andWhere({quiz_id: body.quiz_id})
+
+  if (isContestantExist?.length > 0) {
+    return formatJSONResponse({
+      code: 1,
+      message: 'you have entered this quiz. Thank you for participating'
+    }, 500);
+  }
 
   const contestantResultIds: Array<number> = await knexInstance<Contestant>('contestants')
     .insert({
@@ -30,9 +40,6 @@ const contestants: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (ev
     answer.participant_id = contestantResultIds[0]
     return answer
   })
-
-  console.log('>>>>>>>>')
-  console.log(answers)
 
   const answerResultIds: Array<number>  = await knexInstance<Answer>('answers')
   .insert(answers)
