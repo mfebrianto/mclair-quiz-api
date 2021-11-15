@@ -1,4 +1,4 @@
 export default interface Quiz {
-    id: string;
+    id: number;
     name: string;
 }

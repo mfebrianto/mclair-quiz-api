@@ -1,5 +1,5 @@
 export default interface Question {
-    id: string;
+    id: number;
     quiz_id: string;
     question: string;
     image_url: string;
