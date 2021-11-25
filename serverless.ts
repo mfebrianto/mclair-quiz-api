@@ -4,6 +4,7 @@ import hello from '@functions/hello';
 import quizzes from '@functions/quizzes';
 import quizDetail from '@functions/quiz_detail';
 import candidates from '@functions/contestants';
+import answers from '@functions/answers';
 
 const serverlessConfiguration: AWS = {
   service: 'quiz-api',
@@ -33,7 +34,7 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
-  functions: { hello, quizzes, quizDetail, candidates},
+  functions: { hello, quizzes, quizDetail, candidates, answers},
 };
 
 module.exports = serverlessConfiguration;
