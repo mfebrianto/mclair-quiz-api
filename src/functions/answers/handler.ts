@@ -6,8 +6,10 @@ import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
 
 import schema from './schema';
-import Contestant from 'src/models/contestant';
 import Answer from 'src/models/answer';
+import { score } from '@libs/calculate';
+import Contestant from 'src/models/contestant';
+
 
 const knexInstance = knex(knexfile);
 
@@ -17,13 +19,25 @@ const answers: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
 
   console.log(body);
 
-  body.answers.forEach(element => {
-    console.log(element.question_id);
-  });
+  const answerIds = await knexInstance<Answer>('answers')
+  .insert(body.answers)
+  .returning('id')
 
+  const questions = await knexInstance<Answer>('questions')
+  .whereIn('id', body.answers.map(answer => answer.question_id))
+
+  const calculatedScore = score(body.answers, questions)
+
+  console.log(body.answers[0])
+
+  await knexInstance<Contestant>('contestants')
+    .where('id', body.answers[0].participant_id)
+    .update({
+      score: calculatedScore
+    })
 
   return formatJSONResponse({
-    message: 'test',
+    message: calculatedScore,
     event,
   });
 }

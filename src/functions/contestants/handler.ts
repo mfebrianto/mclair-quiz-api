@@ -7,7 +7,6 @@ import { formatJSONResponse } from '@libs/apiGateway';
 
 import schema from './schema';
 import Contestant from 'src/models/contestant';
-import Answer from 'src/models/answer';
 
 const knexInstance = knex(knexfile);
 
@@ -27,7 +26,7 @@ const contestants: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (ev
     }, 500);
   }
 
-  const contestantResultIds: Array<number> = await knexInstance<Contestant>('contestants')
+  const contestantResultId: Array<number> = await knexInstance<Contestant>('contestants')
     .insert({
       name: body.name,
       email: body.email,
@@ -36,17 +35,8 @@ const contestants: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (ev
     })
     .returning('id')
 
-  const answers = body.answers.map(answer => {
-    answer.participant_id = contestantResultIds[0]
-    return answer
-  })
-
-  const answerResultIds: Array<number>  = await knexInstance<Answer>('answers')
-  .insert(answers)
-  .returning('id')
-
   return formatJSONResponse({
-    message: answerResultIds,
+    message: contestantResultId,
     event,
   });
 }

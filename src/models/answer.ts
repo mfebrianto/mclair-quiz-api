@@ -1,5 +1,5 @@
 export default interface Answer {
-    id: number;
+    id?: number;
     participant_id: number;
     question_id: number;
     answer: number;

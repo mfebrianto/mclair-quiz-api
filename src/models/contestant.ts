@@ -4,4 +4,5 @@ export default interface Contestant {
     name: string;
     email: string;
     phone: string;
+    score: number;
 }
