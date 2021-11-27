@@ -5,13 +5,6 @@ export default {
     name: { type: 'string' },
     email: { type: 'string' },
     phone: { type: 'string' },
-    answers: { type: [
-        {
-          answer: { type: 'integer' },
-          answer_time: { type: 'integer' }
-        }
-      ]
-    }
   },
-  required: ['quiz_id', 'name', 'email', 'phone', 'answers']
+  required: ['quiz_id', 'name', 'email', 'phone']
 } as const;
