@@ -11,6 +11,7 @@ const quizDetail = async (event) => {
   const quizzDetail = await knexInstance<Quiz>('quizzes')
     .join('questions', 'questions.quiz_id', 'quizzes.id')
     .select({
+      id: 'questions.id',
       name: 'quizzes.name',
       question: 'questions.question',
       image_url: 'questions.image_url',
