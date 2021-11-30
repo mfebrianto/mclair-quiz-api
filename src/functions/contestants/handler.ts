@@ -16,7 +16,7 @@ const contestants: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (ev
 
   const isContestantExist = await knexInstance<Contestant>('contestants')
     .where({email: body.email})
-    .andWhere({phone: body.phone})
+    .orWhere({phone: body.phone})
     .andWhere({quiz_id: body.quiz_id})
 
   if (isContestantExist?.length > 0) {
