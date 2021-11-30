@@ -1160,10 +1160,10 @@
   "resolved" "https://registry.npmjs.org/at-least-node/-/at-least-node-1.0.0.tgz"
   "version" "1.0.0"
 
-"aws-sdk@^2.1030.0", "aws-sdk@^2.1032.0":
-  "integrity" "sha512-K0f4uXL32ZdoPmWiuSQEAC5ae5v7gNmhjzoEB7VonE5E8l2umWsoU0Ahm8WPr14LgsvtkeyBuqBjphbxLz6hIw=="
-  "resolved" "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1036.0.tgz"
-  "version" "2.1036.0"
+"aws-sdk@^2.1030.0", "aws-sdk@^2.1032.0", "aws-sdk@^2.1039.0":
+  "integrity" "sha512-vrWWUNkRp+psMj56tKhTSKAXtROz2ccQ0NamMt/OS8jEt54ZIhjMeJDkbRucMEPQCeWR8Ma2g6ITmZPVDwUYaw=="
+  "resolved" "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1039.0.tgz"
+  "version" "2.1039.0"
   dependencies:
     "buffer" "4.9.2"
     "events" "1.1.1"
