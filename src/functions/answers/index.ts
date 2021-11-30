@@ -16,5 +16,12 @@ export default {
         cors: true,
       }
     }
-  ]
+  ],
+  iamRoleStatements: [
+    {
+      'Effect': 'Allow',
+      'Action': ['ses:SendEmail'],
+      'Resource': '*'
+    }
+  ],
 }

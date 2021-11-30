@@ -1,5 +1,5 @@
-import { SES, AWSError } from 'aws-sdk';
-import { SendEmailRequest, SendEmailResponse } from 'aws-sdk/clients/ses';
+import { SES } from 'aws-sdk';
+import { SendEmailRequest } from 'aws-sdk/clients/ses';
 import Contestant from '../models/contestant';
 
 const SESConfig = {
@@ -38,10 +38,7 @@ let params = (contestant: Contestant, score: number): SendEmailRequest => {
   }
 }
 
-export const sendEmail = (contestant: Contestant, score: number) => {
-  AWS.config.update(SESConfig);
-  ses.sendEmail(params(contestant, score), (err: AWSError, data: SendEmailResponse) => {
-  if (err) console.log(err, err.stack);
-      else console.log(data);
-  });
+export const sendEmail = async (contestant: Contestant, score: number) => {
+  const data = await ses.sendEmail(params(contestant, score)).promise()
+  return data
 }

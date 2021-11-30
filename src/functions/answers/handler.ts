@@ -10,7 +10,6 @@ import Answer from 'src/models/answer';
 import { score } from '@libs/calculate';
 import Contestant from 'src/models/contestant';
 import { sendEmail } from '@libs/email';
-import contestants from '@functions/contestants';
 
 const knexInstance = knex(knexfile);
 
@@ -37,7 +36,7 @@ const answers: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event)
       score: calculatedScore
     }, ['id', 'name', 'email', 'phone', 'quiz_id', 'score'])
 
-  await sendEmail(contestant, calculatedScore);
+  await sendEmail(contestant[0], calculatedScore);
 
   return formatJSONResponse({
     message: calculatedScore,
